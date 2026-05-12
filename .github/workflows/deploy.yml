@@ -33,7 +33,7 @@ jobs:
       - name: Configure AWS credentials using OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::JulijaLV:role/GitHubActionsS3DeployRole
+          role-to-assume: arn:aws:iam::048333962185:role/GitHubActions2S3Role
           aws-region: ${{ env.AWS_REGION }}
 
       - name: Upload index.html to S3
