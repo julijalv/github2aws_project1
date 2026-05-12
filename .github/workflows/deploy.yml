@@ -1,0 +1,41 @@
+name: Deploy static website to S3
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: eu-north-1
+  S3_BUCKET: judo-aws3-project1
+
+jobs:
+  deploy:
+    name: Deploy index.html to S3
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate index.html exists
+        run: |
+          if [ ! -f index.html ]; then
+            echo "Error: index.html not found"
+            exit 1
+          fi
+
+      - name: Configure AWS credentials using OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::JulijaLV:role/GitHubActionsS3DeployRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Upload index.html to S3
+        run: |
+          aws s3 cp index.html s3://${{ env.S3_BUCKET }}/index.html
