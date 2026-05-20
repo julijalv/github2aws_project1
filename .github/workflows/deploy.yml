@@ -12,7 +12,7 @@ permissions:
 
 env:
   AWS_REGION: eu-north-1
-  S3_BUCKET: judo-aws3-project1_fake
+  S3_BUCKET: judo-aws3-project1
   CLOUDWATCH_NAMESPACE: judo-aws3-project1
   APP_NAME: judo-aws3-project1_app
 
