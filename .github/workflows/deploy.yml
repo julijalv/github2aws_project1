@@ -13,6 +13,8 @@ permissions:
 env:
   AWS_REGION: eu-north-1
   S3_BUCKET: judo-aws3-project1
+  CLOUDWATCH_NAMESPACE: judo-aws3-project1
+  APP_NAME: judo-aws3-project1_app
 
 jobs:
   deploy:
@@ -39,3 +41,23 @@ jobs:
       - name: Upload index.html to S3
         run: |
           aws s3 cp index.html s3://${{ env.S3_BUCKET }}/index.html
+
+      - name: Publish successful deployment metric
+        if: success()
+        run: |
+          aws cloudwatch put-metric-data \
+            --namespace "${{ env.CLOUDWATCH_NAMESPACE }}" \
+            --metric-name DeploymentSuccess \
+            --dimensions BucketName=${{ env.S3_BUCKET }},Branch=${{ github.ref_name }} \
+            --unit Count \
+            --value 1
+
+      - name: Publish failed deployment metric
+        if: failure()
+        run: |
+          aws cloudwatch put-metric-data \
+            --namespace "${{ env.CLOUDWATCH_NAMESPACE }}" \
+            --metric-name DeploymentFailure \
+            --dimensions BucketName=${{ env.S3_BUCKET }},Branch=${{ github.ref_name }} \
+            --unit Count \
+            --value 1
